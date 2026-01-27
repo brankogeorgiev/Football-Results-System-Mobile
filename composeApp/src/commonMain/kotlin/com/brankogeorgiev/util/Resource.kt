@@ -1,12 +1,16 @@
 package com.brankogeorgiev.util
 
 import footballresultssystem.composeapp.generated.resources.Res
-import footballresultssystem.composeapp.generated.resources.delete
-import footballresultssystem.composeapp.generated.resources.edit
+import footballresultssystem.composeapp.generated.resources.*
 
 object Resource {
     object Icon {
         val DELETE = Res.drawable.delete
         val EDIT = Res.drawable.edit
+        val TROPHY = Res.drawable.trophy
+        val LOGOUT = Res.drawable.logout
+        val LOGIN = Res.drawable.login
+        val ADMIN = Res.drawable.admin_settings
+        val ADD = Res.drawable.add
     }
 }
