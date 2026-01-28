@@ -1,4 +1,4 @@
-package com.brankogeorgiev.presentation.composable
+package com.brankogeorgiev.presentation.composable.top_bar
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding

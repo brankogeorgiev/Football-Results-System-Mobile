@@ -40,7 +40,6 @@ import org.jetbrains.compose.resources.painterResource
 fun MatchCard(
     modifier: Modifier = Modifier,
     isLoggedIn: Boolean,
-    onUpdateIsLoggedIn: () -> Unit,
     homeTeam: String,
     awayTeam: String,
     homeScore: Int,
@@ -59,7 +58,7 @@ fun MatchCard(
             .clickable(
                 interactionSource = interactionSource,
                 indication = null,
-                onClick = onUpdateIsLoggedIn
+                onClick = {}
             ),
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(
@@ -164,5 +163,5 @@ fun ScorePill(score: Int) {
 @Preview
 @Composable
 private fun MatchCardPreview() {
-    MatchCard(Modifier, false, {}, "Beli", "Crni", 4, 3, LocalDate(2026, 1, 15), {}, {})
+    MatchCard(Modifier, false, "Beli", "Crni", 4, 3, LocalDate(2026, 1, 15), {}, {})
 }

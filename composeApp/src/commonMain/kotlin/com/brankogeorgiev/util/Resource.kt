@@ -12,5 +12,9 @@ object Resource {
         val LOGIN = Res.drawable.login
         val ADMIN = Res.drawable.admin_settings
         val ADD = Res.drawable.add
+        val PLAYERS = Res.drawable.players
+        val STATS = Res.drawable.stats
+        val EXPORT = Res.drawable.export
+        val DOWNLOAD = Res.drawable.download
     }
 }

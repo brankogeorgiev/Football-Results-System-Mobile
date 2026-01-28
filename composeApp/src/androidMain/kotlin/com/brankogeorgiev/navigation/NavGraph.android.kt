@@ -10,7 +10,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.ui.NavDisplay
-import com.brankogeorgiev.presentation.composable.CustomTopAppBar
+import com.brankogeorgiev.presentation.composable.bottom_bar.CustomBottomAppBar
+import com.brankogeorgiev.presentation.composable.top_bar.CustomTopAppBar
 import com.brankogeorgiev.presentation.screen.home.HomeScreen
 import org.koin.compose.koinInject
 
@@ -27,6 +28,15 @@ actual fun NavGraph() {
                 updateIsLoggedIn = { isLoggedIn = !isLoggedIn },
                 isAdmin = isAdmin,
                 updateIsAdmin = { isAdmin = !isAdmin }
+            )
+        },
+        bottomBar = {
+            CustomBottomAppBar(
+                screen = Screen.Home,
+                onNavigate = { screen ->
+                    navigator.navigateToScreen(screen)
+                },
+                isAdmin = isAdmin
             )
         }
     ) { paddingValues ->
