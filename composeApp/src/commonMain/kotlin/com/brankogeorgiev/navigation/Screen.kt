@@ -6,4 +6,13 @@ import kotlinx.serialization.Serializable
 sealed class Screen {
     @Serializable
     object Home : Screen()
+
+    @Serializable
+    object Players : Screen()
+
+    @Serializable
+    object Stats : Screen()
+
+    @Serializable
+    object Export : Screen()
 }

@@ -9,4 +9,8 @@ class Navigator {
     fun goBack() {
         backStack.removeLastOrNull()
     }
+
+    fun navigateToScreen(screen: Screen) {
+        backStack.add(screen)
+    }
 }

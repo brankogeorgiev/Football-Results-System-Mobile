@@ -88,7 +88,6 @@ fun HomeScreen(
                 items(items = matchList) {
                     MatchCard(
                         isLoggedIn = isLoggedIn,
-                        onUpdateIsLoggedIn = updateIsLoggedIn,
                         homeTeam = it.homeTeam,
                         awayTeam = it.awayTeam,
                         homeScore = it.homeScore,
