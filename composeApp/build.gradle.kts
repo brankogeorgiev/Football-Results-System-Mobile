@@ -5,6 +5,7 @@ plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
+    alias(libs.plugins.kotlin.serialization)
 }
 
 kotlin {
@@ -35,6 +36,10 @@ kotlin {
             implementation(libs.navigation3.ui)
             implementation(libs.navigation3.viewmodel)
             implementation(libs.navigation3.adaptive)
+
+            implementation(libs.ktor.client.okhttp)
+
+            implementation(libs.androidx.security.crypto)
         }
         commonMain.dependencies {
             implementation(libs.compose.runtime)
@@ -53,6 +58,12 @@ kotlin {
             implementation(libs.koin.compose)
             implementation(libs.koin.compose.viewmodel)
             implementation(libs.koin.navigation3)
+
+            implementation(libs.bundles.ktor)
+        }
+        nativeMain.dependencies {
+            implementation(libs.ktor.client.darwin)
+            implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
@@ -70,6 +81,12 @@ android {
         targetSdk = libs.versions.android.targetSdk.get().toInt()
         versionCode = 1
         versionName = "1.0"
+
+        val apiKey = project.findProperty("VITE_SUPABASE_PUBLISHABLE_KEY") as String? ?: ""
+        val baseUrl = project.findProperty("VITE_SUPABASE_URL") as String? ?: ""
+
+        buildConfigField("String", "API_KEY", "\"$apiKey\"")
+        buildConfigField("String", "API_BASE_URL", "\"$baseUrl\"")
     }
     packaging {
         resources {
@@ -85,9 +102,11 @@ android {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
+    buildFeatures {
+        buildConfig = true
+    }
 }
 
 dependencies {
     debugImplementation(libs.compose.uiTooling)
 }
-

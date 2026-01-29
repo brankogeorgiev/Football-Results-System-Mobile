@@ -23,28 +23,17 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.brankogeorgiev.domain.Match
 import com.brankogeorgiev.presentation.composable.MatchCard
 import com.brankogeorgiev.util.Resource
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.todayIn
 import org.jetbrains.compose.resources.painterResource
-import kotlin.time.Clock
 
 @Composable
 fun HomeScreen(
+    uiState: HomeUIState,
     isLoggedIn: Boolean,
-    updateIsLoggedIn: () -> Unit,
     isAdmin: Boolean,
     modifier: Modifier = Modifier
 ) {
-    val match = Match(
-        homeTeam = "Beli", awayTeam = "Crni", homeScore = 4, awayScore = 3,
-        matchDate = Clock.System.todayIn(TimeZone.currentSystemDefault())
-    )
-    val matchList = listOf(
-        match, match, match, match, match, match, match, match, match
-    )
 
     Scaffold { paddingValues ->
         Column(
@@ -85,7 +74,7 @@ fun HomeScreen(
                 modifier = Modifier.padding(12.dp)
                     .fillMaxSize()
             ) {
-                items(items = matchList) {
+                items(items = uiState.matches) {
                     MatchCard(
                         isLoggedIn = isLoggedIn,
                         homeTeam = it.homeTeam,
@@ -106,6 +95,6 @@ fun HomeScreen(
 @Composable
 private fun HomeScreenPreview() {
     MaterialTheme {
-        HomeScreen(false, {}, true)
+        HomeScreen(HomeUIState(), false, true)
     }
 }

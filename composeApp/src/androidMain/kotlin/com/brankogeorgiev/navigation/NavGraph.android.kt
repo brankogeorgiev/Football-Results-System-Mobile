@@ -10,16 +10,21 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.ui.NavDisplay
+import com.brankogeorgiev.data.network.ApiClient
 import com.brankogeorgiev.presentation.composable.bottom_bar.CustomBottomAppBar
 import com.brankogeorgiev.presentation.composable.top_bar.CustomTopAppBar
 import com.brankogeorgiev.presentation.screen.home.HomeScreen
+import com.brankogeorgiev.presentation.screen.home.HomeViewModel
 import org.koin.compose.koinInject
 
 @Composable
-actual fun NavGraph() {
+actual fun NavGraph(client: ApiClient) {
     val navigator = koinInject<Navigator>()
     var isLoggedIn by remember { mutableStateOf(false) }
     var isAdmin by remember { mutableStateOf(true) }
+
+    val homeViewModel = HomeViewModel(client = client)
+    var homeUiState by remember { mutableStateOf(homeViewModel.uiState) }
 
     Scaffold(
         topBar = {
@@ -47,9 +52,9 @@ actual fun NavGraph() {
             entryProvider = entryProvider {
                 entry<Screen.Home>() {
                     HomeScreen(
+                        uiState = homeUiState.value,
                         isLoggedIn = isLoggedIn,
-                        updateIsLoggedIn = { isLoggedIn = !isLoggedIn },
-                        isAdmin = isAdmin
+                        isAdmin = isAdmin,
                     )
                 }
             }
