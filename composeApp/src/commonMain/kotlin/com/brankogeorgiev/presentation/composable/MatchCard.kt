@@ -111,7 +111,7 @@ fun MatchCard(
                 }
             }
             Text(
-                text = LocalDate.parse(date).formatDate(),
+                text = date,
                 fontSize = 12.sp,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
@@ -119,12 +119,17 @@ fun MatchCard(
     }
 }
 
-fun LocalDate.formatDate(): String {
-    val days = listOf("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun")
-    val dayOfWeek = days[this.dayOfWeek.isoDayNumber - 1]
-    return "$dayOfWeek, ${this.dayOfMonth.toString().padStart(2, '0')}.${
-        this.monthNumber.toString().padStart(2, '0')
-    }.${this.year}"
+fun String.toFormattedDate(): String {
+    return try {
+        val date = LocalDate.parse(this)
+        val days = listOf("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun")
+        val dayOfWeek = days[date.dayOfWeek.isoDayNumber - 1]
+        "$dayOfWeek, ${date.dayOfMonth.toString().padStart(2, '0')}.${
+            date.monthNumber.toString().padStart(2, '0')
+        }.${date.year}"
+    } catch (e: Exception) {
+        this
+    }
 }
 
 @Composable
