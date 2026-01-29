@@ -16,11 +16,12 @@ import org.jetbrains.compose.resources.painterResource
 fun CustomBottomAppBar(
     screen: Screen,
     onNavigate: (Screen) -> Unit,
+    isLoggedIn: Boolean = false,
     isAdmin: Boolean = false,
     modifier: Modifier = Modifier
 ) {
     val items = listOf(BottomNavItem.Results, BottomNavItem.PLayers, BottomNavItem.Stats) +
-            if (isAdmin) listOf(BottomNavItem.Export) else emptyList()
+            if (isLoggedIn && isAdmin) listOf(BottomNavItem.Export) else emptyList()
 
     NavigationBar(
         modifier = modifier,

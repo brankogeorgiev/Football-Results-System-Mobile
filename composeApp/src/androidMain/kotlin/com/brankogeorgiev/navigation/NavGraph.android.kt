@@ -41,6 +41,7 @@ actual fun NavGraph(client: ApiClient) {
                 onNavigate = { screen ->
                     navigator.navigateToScreen(screen)
                 },
+                isLoggedIn = isLoggedIn,
                 isAdmin = isAdmin
             )
         }
