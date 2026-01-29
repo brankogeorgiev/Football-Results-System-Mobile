@@ -20,6 +20,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -63,9 +64,10 @@ fun MatchCard(
             ),
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(
-            containerColor = Color.White
+            containerColor = MaterialTheme.colorScheme.surfaceContainer
         ),
-        border = if (showBorder) BorderStroke(1.dp, Color.Green) else null,
+        border =
+            if (showBorder) BorderStroke(1.dp, MaterialTheme.colorScheme.primary) else null,
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
 
     ) {
@@ -79,7 +81,8 @@ fun MatchCard(
             ) {
                 Text(
                     text = homeTeam.name,
-                    fontWeight = FontWeight.Medium
+                    fontWeight = FontWeight.Medium,
+                    color = MaterialTheme.colorScheme.onSurface
                 )
 
                 Spacer(modifier = Modifier.width(12.dp))
@@ -88,7 +91,8 @@ fun MatchCard(
                 Text(
                     modifier = Modifier.padding(horizontal = 6.dp),
                     text = ":",
-                    fontWeight = FontWeight.Bold
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onSurface
                 )
                 ScorePill(score = awayScore)
 
@@ -96,7 +100,8 @@ fun MatchCard(
 
                 Text(
                     text = awayTeam.name,
-                    fontWeight = FontWeight.Medium
+                    fontWeight = FontWeight.Medium,
+                    color = MaterialTheme.colorScheme.onSurface
                 )
 
                 Spacer(modifier = Modifier.weight(1f))
@@ -106,9 +111,9 @@ fun MatchCard(
                 }
             }
             Text(
-                text = date,
+                text = LocalDate.parse(date).formatDate(),
                 fontSize = 12.sp,
-                color = Color.Gray
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
     }
@@ -152,12 +157,16 @@ fun MatchActions(onEdit: () -> Unit, onDelete: () -> Unit) {
 fun ScorePill(score: Int) {
     Box(
         modifier = Modifier.size(32.dp).background(
-            color = Color.LightGray,
+            color = MaterialTheme.colorScheme.primary,
             shape = RoundedCornerShape(10.dp)
         ),
         contentAlignment = Alignment.Center
     ) {
-        Text(text = score.toString(), fontWeight = FontWeight.Bold)
+        Text(
+            text = score.toString(),
+            fontWeight = FontWeight.Bold,
+            color = MaterialTheme.colorScheme.onPrimary
+        )
     }
 }
 

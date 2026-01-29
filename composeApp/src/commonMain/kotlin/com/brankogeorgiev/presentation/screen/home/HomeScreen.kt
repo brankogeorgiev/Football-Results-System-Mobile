@@ -18,7 +18,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -35,7 +34,9 @@ fun HomeScreen(
     modifier: Modifier = Modifier
 ) {
 
-    Scaffold { paddingValues ->
+    Scaffold(
+        containerColor = MaterialTheme.colorScheme.background
+    ) { paddingValues ->
         Column(
             modifier = modifier
                 .fillMaxSize()
@@ -49,21 +50,23 @@ fun HomeScreen(
                 Text(
                     text = "Past Results",
                     fontSize = 20.sp,
-                    fontWeight = FontWeight.Black
+                    fontWeight = FontWeight.Black,
+                    color = MaterialTheme.colorScheme.onBackground
                 )
 
                 if (isLoggedIn && isAdmin) {
                     Button(
                         onClick = {},
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = Color(0xFF0BDA51),
-                            contentColor = Color.White
+                            containerColor = MaterialTheme.colorScheme.primary,
+                            contentColor = MaterialTheme.colorScheme.onPrimary
                         ),
                         shape = RoundedCornerShape(12.dp)
                     ) {
                         Icon(
                             painter = painterResource(Resource.Icon.ADD),
-                            contentDescription = ""
+                            contentDescription = "",
+                            tint = MaterialTheme.colorScheme.onPrimary
                         )
                         Text(text = "Add result")
                     }
