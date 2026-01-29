@@ -31,6 +31,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.brankogeorgiev.domain.Team
 import com.brankogeorgiev.util.Resource
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.isoDayNumber
@@ -40,11 +41,11 @@ import org.jetbrains.compose.resources.painterResource
 fun MatchCard(
     modifier: Modifier = Modifier,
     isLoggedIn: Boolean,
-    homeTeam: String,
-    awayTeam: String,
+    homeTeam: Team,
+    awayTeam: Team,
     homeScore: Int,
     awayScore: Int,
-    date: LocalDate,
+    date: String,
     onEdit: () -> Unit,
     onDelete: () -> Unit
 ) {
@@ -77,7 +78,7 @@ fun MatchCard(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = homeTeam,
+                    text = homeTeam.name,
                     fontWeight = FontWeight.Medium
                 )
 
@@ -94,7 +95,7 @@ fun MatchCard(
                 Spacer(modifier = Modifier.width(12.dp))
 
                 Text(
-                    text = awayTeam,
+                    text = awayTeam.name,
                     fontWeight = FontWeight.Medium
                 )
 
@@ -105,7 +106,7 @@ fun MatchCard(
                 }
             }
             Text(
-                text = date.formatDate(),
+                text = date,
                 fontSize = 12.sp,
                 color = Color.Gray
             )
@@ -163,5 +164,14 @@ fun ScorePill(score: Int) {
 @Preview
 @Composable
 private fun MatchCardPreview() {
-    MatchCard(Modifier, false, "Beli", "Crni", 4, 3, LocalDate(2026, 1, 15), {}, {})
+    MatchCard(
+        Modifier,
+        false,
+        Team(name = "Beli"),
+        Team(name = "Crni"),
+        4,
+        3,
+        "LocalDate(2026, 1, 15)",
+        {},
+        {})
 }
