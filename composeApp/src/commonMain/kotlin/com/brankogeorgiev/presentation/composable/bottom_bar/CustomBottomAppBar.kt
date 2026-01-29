@@ -1,6 +1,7 @@
 package com.brankogeorgiev.presentation.composable.bottom_bar
 
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
@@ -21,10 +22,14 @@ fun CustomBottomAppBar(
     val items = listOf(BottomNavItem.Results, BottomNavItem.PLayers, BottomNavItem.Stats) +
             if (isAdmin) listOf(BottomNavItem.Export) else emptyList()
 
-    NavigationBar(modifier = modifier) {
+    NavigationBar(
+        modifier = modifier,
+        containerColor = MaterialTheme.colorScheme.surfaceContainer
+    ) {
         items.forEach { item ->
+            val isSelected = screen == item.screen
             NavigationBarItem(
-                selected = screen == item.screen,
+                selected = isSelected,
                 onClick = { onNavigate(item.screen) },
                 icon = {
                     Icon(
@@ -32,10 +37,12 @@ fun CustomBottomAppBar(
                         contentDescription = item.label
                     )
                 },
-                label = { Text(text = item.label) },
+                label = {
+                    Text(text = item.label)
+                },
                 colors = NavigationBarItemDefaults.colors(
-                    selectedIconColor = Color(0xFF0BDA51),
-                    selectedTextColor = Color(0xFF0BDA51),
+                    selectedIconColor = MaterialTheme.colorScheme.primary,
+                    selectedTextColor = MaterialTheme.colorScheme.primary,
                     indicatorColor = Color.Transparent
                 )
             )
