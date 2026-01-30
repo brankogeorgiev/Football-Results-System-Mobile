@@ -16,5 +16,6 @@ object Resource {
         val STATS = Res.drawable.stats
         val EXPORT = Res.drawable.export
         val DOWNLOAD = Res.drawable.download
+        val PERSON = Res.drawable.person
     }
 }

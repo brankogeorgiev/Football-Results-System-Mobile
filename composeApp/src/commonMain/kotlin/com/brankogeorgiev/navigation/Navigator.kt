@@ -11,6 +11,8 @@ class Navigator {
     }
 
     fun navigateToScreen(screen: Screen) {
-        backStack.add(screen)
+        if (backStack.lastOrNull() != screen) {
+            backStack.add(screen)
+        }
     }
 }

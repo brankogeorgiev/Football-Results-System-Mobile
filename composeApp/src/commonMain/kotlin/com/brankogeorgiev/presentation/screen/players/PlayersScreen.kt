@@ -1,4 +1,4 @@
-package com.brankogeorgiev.presentation.screen.home
+package com.brankogeorgiev.presentation.screen.players
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -12,47 +12,40 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.brankogeorgiev.data.network.ApiClient
 import com.brankogeorgiev.presentation.composable.LoadingIndicator
-import com.brankogeorgiev.presentation.composable.MatchCard
-import com.brankogeorgiev.presentation.composable.toFormattedDate
+import com.brankogeorgiev.presentation.composable.PlayerCard
 import com.brankogeorgiev.util.DisplayResult
-import io.ktor.client.HttpClient
 
 @Composable
-fun HomeScreen(
+fun PlayersScreen(
     client: ApiClient,
     isLoggedIn: Boolean,
     isAdmin: Boolean,
     modifier: Modifier = Modifier
 ) {
-    val viewModel = remember { HomeViewModel(client = client) }
+    val viewModel = remember { PlayersViewModel(client) }
     val uiState by viewModel.uiState
 
-    uiState.matches.DisplayResult(
+    uiState.players.DisplayResult(
         onLoading = { LoadingIndicator() },
         onError = {},
-        onSuccess = { matches ->
+        onSuccess = { players ->
             Column(modifier = modifier.fillMaxSize().padding(12.dp)) {
                 Text(
-                    text = "Past Results",
+                    text = "Players",
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Black,
                     modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp)
                 )
 
                 LazyColumn(modifier = Modifier.fillMaxSize()) {
-                    items(matches) {
-                        val matchDate = it.matchDate.toFormattedDate()
-                        MatchCard(
+                    items(players) {
+                        PlayerCard(
+                            player = it,
+                            isAdmin = isAdmin,
                             isLoggedIn = isLoggedIn,
-                            homeTeam = it.homeTeam,
-                            awayTeam = it.awayTeam,
-                            homeScore = it.homeScore,
-                            awayScore = it.awayScore,
-                            date = matchDate,
                             onEdit = {},
                             onDelete = {}
                         )
@@ -61,12 +54,4 @@ fun HomeScreen(
             }
         }
     )
-}
-
-@Preview
-@Composable
-private fun HomeScreenPreview() {
-    MaterialTheme {
-        HomeScreen(ApiClient(HttpClient()), true, false)
-    }
 }
