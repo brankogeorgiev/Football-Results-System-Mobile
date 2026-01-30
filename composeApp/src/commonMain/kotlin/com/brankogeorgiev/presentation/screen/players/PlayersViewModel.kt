@@ -1,4 +1,4 @@
-package com.brankogeorgiev.presentation.screen.home
+package com.brankogeorgiev.presentation.screen.players
 
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
@@ -10,30 +10,30 @@ import com.brankogeorgiev.util.RequestState
 import com.brankogeorgiev.util.Result
 import kotlinx.coroutines.launch
 
-class HomeViewModel(
+class PlayersViewModel(
     private val client: ApiClient
 ) : ViewModel() {
-    private var _uiState: MutableState<HomeUiState> = mutableStateOf(HomeUiState())
-    val uiState: State<HomeUiState> = _uiState
+    private var _uiState: MutableState<PlayersUiState> = mutableStateOf(PlayersUiState())
+    val uiState: State<PlayersUiState> = _uiState
 
     init {
-        loadMatches()
+        loadPlayers()
     }
 
-    private fun loadMatches() {
-        _uiState.value = _uiState.value.copy(matches = RequestState.Loading)
-
+    private fun loadPlayers() {
         viewModelScope.launch {
-            when (val response = client.fetchMatches()) {
+            _uiState.value = _uiState.value.copy(players = RequestState.Loading)
+
+            when (val response = client.fetchPlayers()) {
                 is Result.Success -> {
                     _uiState.value = _uiState.value.copy(
-                        matches = RequestState.Success(data = response.data)
+                        players = RequestState.Success(data = response.data)
                     )
                 }
 
                 is Result.Error -> {
                     _uiState.value = _uiState.value.copy(
-                        matches = RequestState.Error(message = response.error.name)
+                        players = RequestState.Error(message = response.error.name)
                     )
                 }
             }

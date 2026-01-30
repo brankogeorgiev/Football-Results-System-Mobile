@@ -14,7 +14,7 @@ import com.brankogeorgiev.data.network.ApiClient
 import com.brankogeorgiev.presentation.composable.bottom_bar.CustomBottomAppBar
 import com.brankogeorgiev.presentation.composable.top_bar.CustomTopAppBar
 import com.brankogeorgiev.presentation.screen.home.HomeScreen
-import com.brankogeorgiev.presentation.screen.home.HomeViewModel
+import com.brankogeorgiev.presentation.screen.players.PlayersScreen
 import org.koin.compose.koinInject
 
 @Composable
@@ -23,8 +23,10 @@ actual fun NavGraph(client: ApiClient) {
     var isLoggedIn by remember { mutableStateOf(false) }
     var isAdmin by remember { mutableStateOf(true) }
 
-    val homeViewModel = HomeViewModel(client = client)
-    var homeUiState by remember { mutableStateOf(homeViewModel.uiState) }
+//    val homeViewModel = HomeViewModel(client = client)
+//    var homeUiState by remember { mutableStateOf(homeViewModel.uiState) }
+//    val playersViewModel = PlayersViewModel(client = client)
+//    var playersUiState by remember { mutableStateOf(playersViewModel.uiState) }
 
     Scaffold(
         topBar = {
@@ -37,7 +39,7 @@ actual fun NavGraph(client: ApiClient) {
         },
         bottomBar = {
             CustomBottomAppBar(
-                screen = Screen.Home,
+                screen = navigator.backStack.last(),
                 onNavigate = { screen ->
                     navigator.navigateToScreen(screen)
                 },
@@ -51,11 +53,18 @@ actual fun NavGraph(client: ApiClient) {
             backStack = navigator.backStack,
             onBack = navigator::goBack,
             entryProvider = entryProvider {
-                entry<Screen.Home>() {
+                entry<Screen.Home> {
                     HomeScreen(
-                        uiState = homeUiState.value,
+                        client = client,
                         isLoggedIn = isLoggedIn,
                         isAdmin = isAdmin,
+                    )
+                }
+                entry<Screen.Players> {
+                    PlayersScreen(
+                        client = client,
+                        isLoggedIn = isLoggedIn,
+                        isAdmin = isAdmin
                     )
                 }
             }

@@ -1,11 +1,13 @@
 package com.brankogeorgiev.data.network
 
 import com.brankogeorgiev.data.model.Match
+import com.brankogeorgiev.data.model.Player
 import com.brankogeorgiev.util.NetworkError
 import com.brankogeorgiev.util.Result
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.get
+import io.ktor.client.statement.HttpResponse
 import io.ktor.util.network.UnresolvedAddressException
 import kotlinx.serialization.SerializationException
 
@@ -14,11 +16,15 @@ class ApiClient(
 ) {
     companion object {
         private const val API_MATCHES = "/api-matches"
+        private const val API_PLAYERS = "/api-players"
     }
 
-    suspend fun fetchMatches(): Result<List<Match>, NetworkError> {
-        val response = try {
-            httpClient.get(urlString = getBaseUrl() + API_MATCHES) { }
+    suspend inline fun <reified T> safeGet(
+        httpClient: HttpClient,
+        url: String
+    ): Result<T, NetworkError> {
+        val response: HttpResponse = try {
+            httpClient.get(url)
         } catch (e: UnresolvedAddressException) {
             return Result.Error(NetworkError.NO_INTERNET)
         } catch (e: SerializationException) {
@@ -27,8 +33,11 @@ class ApiClient(
 
         return when (response.status.value) {
             in 200..299 -> {
-                val matches = response.body<List<Match>>()
-                Result.Success(data = matches)
+                try {
+                    Result.Success(response.body<T>())
+                } catch (e: SerializationException) {
+                    Result.Error(NetworkError.SERIALIZATION)
+                }
             }
 
             401 -> Result.Error(NetworkError.UNAUTHORIZED)
@@ -39,4 +48,10 @@ class ApiClient(
             else -> Result.Error(NetworkError.UNKNOWN)
         }
     }
+
+    suspend fun fetchMatches() =
+        safeGet<List<Match>>(httpClient, getBaseUrl() + API_MATCHES)
+
+    suspend fun fetchPlayers() =
+        safeGet<List<Player>>(httpClient, getBaseUrl() + API_PLAYERS)
 }
