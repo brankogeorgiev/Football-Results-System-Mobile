@@ -13,7 +13,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.brankogeorgiev.data.network.ApiClient
+import com.brankogeorgiev.data.auth.ApiClient
+import com.brankogeorgiev.data.auth.UserSession
 import com.brankogeorgiev.presentation.composable.LoadingIndicator
 import com.brankogeorgiev.presentation.composable.PlayerCard
 import com.brankogeorgiev.util.DisplayResult
@@ -23,9 +24,10 @@ fun PlayersScreen(
     client: ApiClient,
     isLoggedIn: Boolean,
     isAdmin: Boolean,
+    userSession: UserSession? = null,
     modifier: Modifier = Modifier
 ) {
-    val viewModel = remember { PlayersViewModel(client) }
+    val viewModel = remember { PlayersViewModel(client, userSession) }
     val uiState by viewModel.uiState
 
     uiState.players.DisplayResult(

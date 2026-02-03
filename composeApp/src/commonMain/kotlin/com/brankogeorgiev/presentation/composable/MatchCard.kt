@@ -34,6 +34,7 @@ import kotlinx.datetime.isoDayNumber
 fun MatchCard(
     modifier: Modifier = Modifier,
     isLoggedIn: Boolean,
+    isAdmin: Boolean,
     homeTeam: Team,
     awayTeam: Team,
     homeScore: Int,
@@ -100,7 +101,7 @@ fun MatchCard(
 
                 Spacer(modifier = Modifier.weight(1f))
 
-                if (isLoggedIn) {
+                if (isLoggedIn && isAdmin) {
                     ListItemCardActions(onEdit = onEdit, onDelete = onDelete)
                 }
             }
@@ -131,6 +132,7 @@ fun String.toFormattedDate(): String {
 private fun MatchCardPreview() {
     MatchCard(
         Modifier,
+        false,
         false,
         Team(name = "Beli"),
         Team(name = "Crni"),

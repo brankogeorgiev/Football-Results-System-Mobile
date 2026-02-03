@@ -10,7 +10,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.ui.NavDisplay
-import com.brankogeorgiev.data.network.ApiClient
+import com.brankogeorgiev.data.auth.ApiClient
+import com.brankogeorgiev.data.auth.UserSession
 import com.brankogeorgiev.presentation.composable.bottom_bar.CustomBottomAppBar
 import com.brankogeorgiev.presentation.composable.top_bar.CustomTopAppBar
 import com.brankogeorgiev.presentation.screen.home.HomeScreen
@@ -18,7 +19,12 @@ import com.brankogeorgiev.presentation.screen.players.PlayersScreen
 import org.koin.compose.koinInject
 
 @Composable
-actual fun NavGraph(client: ApiClient) {
+actual fun NavGraph(
+    client: ApiClient,
+    userSession: UserSession?,
+    login: (String, String) -> Unit,
+    logout: () -> Unit
+) {
     val navigator = koinInject<Navigator>()
     var isLoggedIn by remember { mutableStateOf(false) }
     var isAdmin by remember { mutableStateOf(true) }
@@ -31,9 +37,10 @@ actual fun NavGraph(client: ApiClient) {
     Scaffold(
         topBar = {
             CustomTopAppBar(
-                isLoggedIn = isLoggedIn,
-                updateIsLoggedIn = { isLoggedIn = !isLoggedIn },
-                isAdmin = isAdmin,
+                isLoggedIn = userSession != null,
+                isAdmin = userSession?.isAdmin ?: false,
+                login = login,
+                logout = logout,
                 updateIsAdmin = { isAdmin = !isAdmin }
             )
         },
@@ -43,8 +50,8 @@ actual fun NavGraph(client: ApiClient) {
                 onNavigate = { screen ->
                     navigator.navigateToScreen(screen)
                 },
-                isLoggedIn = isLoggedIn,
-                isAdmin = isAdmin
+                isLoggedIn = userSession != null,
+                isAdmin = userSession?.isAdmin ?: false
             )
         }
     ) { paddingValues ->
@@ -58,13 +65,15 @@ actual fun NavGraph(client: ApiClient) {
                         client = client,
                         isLoggedIn = isLoggedIn,
                         isAdmin = isAdmin,
+                        userSession = userSession
                     )
                 }
                 entry<Screen.Players> {
                     PlayersScreen(
                         client = client,
                         isLoggedIn = isLoggedIn,
-                        isAdmin = isAdmin
+                        isAdmin = isAdmin,
+                        userSession = userSession
                     )
                 }
             }

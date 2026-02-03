@@ -13,7 +13,6 @@ import androidx.compose.ui.unit.dp
 import com.brankogeorgiev.util.Resource
 import org.jetbrains.compose.resources.painterResource
 
-
 @Composable
 fun ListItemCardActions(onEdit: () -> Unit, onDelete: () -> Unit) {
     Row(
