@@ -24,7 +24,8 @@ import org.jetbrains.compose.resources.painterResource
 @Composable
 fun CustomTopAppBar(
     isLoggedIn: Boolean,
-    updateIsLoggedIn: () -> Unit,
+    login: (String, String) -> Unit,
+    logout: () -> Unit,
     isAdmin: Boolean,
     updateIsAdmin: () -> Unit
 ) {
@@ -76,7 +77,7 @@ fun CustomTopAppBar(
                 }
             }
             if (isLoggedIn) {
-                IconButton(onClick = updateIsLoggedIn) {
+                IconButton(onClick = logout) {
                     Icon(
                         painter = painterResource(Resource.Icon.LOGOUT),
                         contentDescription = "",
@@ -84,7 +85,9 @@ fun CustomTopAppBar(
                     )
                 }
             } else {
-                IconButton(onClick = updateIsLoggedIn) {
+                IconButton(onClick = {
+                    login("email", "password")
+                }) {
                     Icon(
                         painter = painterResource(Resource.Icon.LOGIN),
                         contentDescription = "",
@@ -99,5 +102,5 @@ fun CustomTopAppBar(
 @Preview
 @Composable
 private fun CustomTopAppBarPreview() {
-    CustomTopAppBar(false, {}, true, {})
+    CustomTopAppBar(false, { a, b -> }, {}, true, {})
 }

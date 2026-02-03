@@ -5,13 +5,15 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.brankogeorgiev.data.network.ApiClient
+import com.brankogeorgiev.data.auth.ApiClient
+import com.brankogeorgiev.data.auth.UserSession
 import com.brankogeorgiev.util.RequestState
 import com.brankogeorgiev.util.Result
 import kotlinx.coroutines.launch
 
 class HomeViewModel(
-    private val client: ApiClient
+    private val client: ApiClient,
+    private val userSession: UserSession?
 ) : ViewModel() {
     private var _uiState: MutableState<HomeUiState> = mutableStateOf(HomeUiState())
     val uiState: State<HomeUiState> = _uiState

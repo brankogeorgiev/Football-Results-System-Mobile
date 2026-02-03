@@ -3,8 +3,11 @@ package com.brankogeorgiev
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.tooling.preview.Preview
-import com.brankogeorgiev.data.network.ApiClient
+import com.brankogeorgiev.data.auth.AuthRepository
+import com.brankogeorgiev.data.auth.AuthViewModel
+import com.brankogeorgiev.data.auth.ApiClient
 import com.brankogeorgiev.navigation.NavGraph
 import com.brankogeorgiev.util.darkScheme
 import com.brankogeorgiev.util.lightScheme
@@ -14,7 +17,15 @@ import com.brankogeorgiev.util.lightScheme
 fun App(client: ApiClient) {
     val colorScheme = if (isSystemInDarkTheme()) darkScheme else lightScheme
 
+    val authRepository = remember { AuthRepository(client) }
+    val authViewModel = remember { AuthViewModel(authRepository = authRepository) }
+
     MaterialTheme(colorScheme = colorScheme) {
-        NavGraph(client = client)
+        NavGraph(
+            client = client,
+            userSession = authViewModel.userSession,
+            login = authViewModel::login,
+            logout = authViewModel::logout
+        )
     }
 }

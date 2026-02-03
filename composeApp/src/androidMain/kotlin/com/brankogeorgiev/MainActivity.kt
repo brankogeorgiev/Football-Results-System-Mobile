@@ -7,10 +7,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.tooling.preview.Preview
-import com.brankogeorgiev.data.network.ApiClient
-import com.brankogeorgiev.data.network.createHttpClient
-import io.ktor.client.HttpClient
-import io.ktor.client.engine.okhttp.OkHttp
+import com.brankogeorgiev.data.auth.ApiClient
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -20,7 +17,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             App(
                 client = remember {
-                    ApiClient(createHttpClient(OkHttp.create()))
+                    ApiClient()
                 }
             )
         }
@@ -30,5 +27,5 @@ class MainActivity : ComponentActivity() {
 @Preview
 @Composable
 fun AppAndroidPreview() {
-    App(ApiClient(HttpClient()))
+    App(ApiClient())
 }
