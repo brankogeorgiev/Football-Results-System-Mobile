@@ -5,10 +5,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.tooling.preview.Preview
-import com.brankogeorgiev.data.auth.AuthRepository
-import com.brankogeorgiev.data.auth.AuthViewModel
 import com.brankogeorgiev.data.auth.ApiClient
+import com.brankogeorgiev.data.auth.AuthRepository
 import com.brankogeorgiev.navigation.NavGraph
+import com.brankogeorgiev.presentation.screen.auth.dialog.AuthViewModel
 import com.brankogeorgiev.util.darkScheme
 import com.brankogeorgiev.util.lightScheme
 
@@ -25,7 +25,11 @@ fun App(client: ApiClient) {
             client = client,
             userSession = authViewModel.userSession,
             login = authViewModel::login,
-            logout = authViewModel::logout
+            logout = authViewModel::logout,
+            authUiState = authViewModel.uiState.value,
+            onEmailChange = authViewModel::onEmailChange,
+            onPasswordChange = authViewModel::onPasswordChange,
+            onModeChange = authViewModel::onModeChange
         )
     }
 }
