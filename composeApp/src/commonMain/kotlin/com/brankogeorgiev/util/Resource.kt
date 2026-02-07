@@ -1,6 +1,5 @@
 package com.brankogeorgiev.util
 
-import footballresultssystem.composeapp.generated.resources.Res
 import footballresultssystem.composeapp.generated.resources.*
 
 object Resource {
@@ -17,5 +16,9 @@ object Resource {
         val EXPORT = Res.drawable.export
         val DOWNLOAD = Res.drawable.download
         val PERSON = Res.drawable.person
+        val CLOSE = Res.drawable.close
+        val LOCK = Res.drawable.lock
+        val MAIL = Res.drawable.mail
+        val SHIELD = Res.drawable.shield
     }
 }

@@ -1,6 +1,5 @@
 package com.brankogeorgiev.data.auth
 
-import com.brankogeorgiev.data.auth.ApiClient
 import com.brankogeorgiev.util.Secrets
 
 class AuthRepository(private val apiClient: ApiClient) {
@@ -24,7 +23,7 @@ class AuthRepository(private val apiClient: ApiClient) {
             )
             tokenResponse.access_token
         } catch (e: Exception) {
-            return
+            throw Exception("Invalid credentials")
         }
 
         val user: User? =

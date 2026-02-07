@@ -14,6 +14,9 @@ import com.brankogeorgiev.data.auth.ApiClient
 import com.brankogeorgiev.data.auth.UserSession
 import com.brankogeorgiev.presentation.composable.bottom_bar.CustomBottomAppBar
 import com.brankogeorgiev.presentation.composable.top_bar.CustomTopAppBar
+import com.brankogeorgiev.presentation.screen.auth.dialog.AuthDialog
+import com.brankogeorgiev.presentation.screen.auth.dialog.AuthMode
+import com.brankogeorgiev.presentation.screen.auth.dialog.AuthUiState
 import com.brankogeorgiev.presentation.screen.home.HomeScreen
 import com.brankogeorgiev.presentation.screen.players.PlayersScreen
 import org.koin.compose.koinInject
@@ -22,12 +25,17 @@ import org.koin.compose.koinInject
 actual fun NavGraph(
     client: ApiClient,
     userSession: UserSession?,
-    login: (String, String) -> Unit,
-    logout: () -> Unit
+    login: (() -> Unit) -> Unit,
+    logout: () -> Unit,
+    authUiState: AuthUiState,
+    onEmailChange: (String) -> Unit,
+    onPasswordChange: (String) -> Unit,
+    onModeChange: (AuthMode) -> Unit
 ) {
     val navigator = koinInject<Navigator>()
     var isLoggedIn by remember { mutableStateOf(false) }
     var isAdmin by remember { mutableStateOf(true) }
+    var showAuthDialog by remember { mutableStateOf(false) }
 
 //    val homeViewModel = HomeViewModel(client = client)
 //    var homeUiState by remember { mutableStateOf(homeViewModel.uiState) }
@@ -39,8 +47,8 @@ actual fun NavGraph(
             CustomTopAppBar(
                 isLoggedIn = userSession != null,
                 isAdmin = userSession?.isAdmin ?: false,
-                login = login,
                 logout = logout,
+                onLoginClick = { showAuthDialog = true },
                 updateIsAdmin = { isAdmin = !isAdmin }
             )
         },
@@ -77,6 +85,23 @@ actual fun NavGraph(
                     )
                 }
             }
+        )
+    }
+
+    if (showAuthDialog) {
+        AuthDialog(
+            uiState = authUiState,
+            onEmailChange = onEmailChange,
+            onPasswordChange = onPasswordChange,
+            onModeChange = onModeChange,
+            onSignIn = {
+                login({ showAuthDialog = false })
+            },
+            onSignUp = {
+                // TODO: signup()
+                showAuthDialog = false
+            },
+            onDismiss = { showAuthDialog = false }
         )
     }
 }
