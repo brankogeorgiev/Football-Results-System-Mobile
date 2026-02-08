@@ -10,7 +10,7 @@ import com.brankogeorgiev.presentation.screen.auth.dialog.AuthUiState
 actual fun NavGraph(
     client: ApiClient,
     userSession: UserSession?,
-    login: (() -> Unit) -> Unit,
+    authenticate: (Boolean, () -> Unit) -> Unit,
     logout: () -> Unit,
     authUiState: AuthUiState,
     onEmailChange: (String) -> Unit,

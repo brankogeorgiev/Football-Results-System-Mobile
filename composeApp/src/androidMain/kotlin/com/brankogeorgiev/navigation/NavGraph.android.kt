@@ -25,7 +25,7 @@ import org.koin.compose.koinInject
 actual fun NavGraph(
     client: ApiClient,
     userSession: UserSession?,
-    login: (() -> Unit) -> Unit,
+    authenticate: (Boolean, () -> Unit) -> Unit,
     logout: () -> Unit,
     authUiState: AuthUiState,
     onEmailChange: (String) -> Unit,
@@ -95,11 +95,10 @@ actual fun NavGraph(
             onPasswordChange = onPasswordChange,
             onModeChange = onModeChange,
             onSignIn = {
-                login({ showAuthDialog = false })
+                authenticate(true, { showAuthDialog = false })
             },
             onSignUp = {
-                // TODO: signup()
-                showAuthDialog = false
+                authenticate(false, { showAuthDialog = false })
             },
             onDismiss = { showAuthDialog = false }
         )

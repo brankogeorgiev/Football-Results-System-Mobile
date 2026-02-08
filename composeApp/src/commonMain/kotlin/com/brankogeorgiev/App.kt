@@ -24,7 +24,7 @@ fun App(client: ApiClient) {
         NavGraph(
             client = client,
             userSession = authViewModel.userSession,
-            login = authViewModel::login,
+            authenticate = authViewModel::authenticate,
             logout = authViewModel::logout,
             authUiState = authViewModel.uiState.value,
             onEmailChange = authViewModel::onEmailChange,
