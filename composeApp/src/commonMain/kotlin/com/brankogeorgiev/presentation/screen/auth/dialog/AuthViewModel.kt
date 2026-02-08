@@ -47,7 +47,7 @@ class AuthViewModel(private val authRepository: AuthRepository) : ViewModel() {
         )
     }
 
-    fun login(onSuccess: () -> Unit) {
+    fun authenticate(isLogin: Boolean, onSuccess: () -> Unit) {
         val email = _uiState.value.email
         val password = _uiState.value.password
 
@@ -65,28 +65,33 @@ class AuthViewModel(private val authRepository: AuthRepository) : ViewModel() {
             return
         }
 
-        _uiState.value = _uiState.value.copy(
-            errorMessage = null,
-            isLoading = true,
-            infoMessage = "Signing you in..."
-        )
+        val infoText = if (isLogin) "Signing you in..." else "Creating your account..."
 
         viewModelScope.launch {
             try {
-                _uiState.value = _uiState.value.copy(isLoading = true, infoMessage = null)
+                _uiState.value = _uiState.value.copy(
+                    isLoading = true,
+                    infoMessage = infoText,
+                    errorMessage = null
+                )
 
-                authRepository.login(email, password)
+                if (isLogin) authRepository.login(email = email, password = password)
+                else authRepository.signUp(email = email, password = password)
+
                 userSession = authRepository.getSession()
-
                 onSuccess()
             } catch (e: Exception) {
-                _uiState.value =
-                    _uiState.value.copy(
-                        errorMessage = e.message ?: "Invalid credentials",
-                        infoMessage = null
-                    )
+                _uiState.value = _uiState.value.copy(
+                    errorMessage = e.message
+                        ?: if (isLogin) "Invalid credentials" else "Sign up failed. Please try again.",
+                    infoMessage = null
+                )
             } finally {
-                _uiState.value = _uiState.value.copy(isLoading = false)
+                _uiState.value = _uiState.value.copy(
+                    isLoading = false,
+                    email = "",
+                    password = ""
+                )
             }
         }
     }
