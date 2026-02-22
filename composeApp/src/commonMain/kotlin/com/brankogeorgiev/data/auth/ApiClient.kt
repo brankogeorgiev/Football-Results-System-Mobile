@@ -1,5 +1,6 @@
 package com.brankogeorgiev.data.auth
 
+import com.brankogeorgiev.data.model.Goal
 import com.brankogeorgiev.data.model.Match
 import com.brankogeorgiev.data.model.Player
 import com.brankogeorgiev.util.NetworkError
@@ -24,6 +25,7 @@ class ApiClient() {
     companion object {
         private const val API_MATCHES = "/api-matches"
         private const val API_PLAYERS = "/api-players"
+        private const val API_GOALS = "/api-goals"
     }
 
     val client = HttpClient {
@@ -91,4 +93,7 @@ class ApiClient() {
 
     suspend fun fetchPlayers() =
         safeGet<List<Player>>(client, getBaseUrl() + API_PLAYERS)
+
+    suspend fun fetchGoals() =
+        safeGet<List<Goal>>(client, getBaseUrl() + API_GOALS)
 }

@@ -19,6 +19,7 @@ import com.brankogeorgiev.presentation.screen.auth.dialog.AuthMode
 import com.brankogeorgiev.presentation.screen.auth.dialog.AuthUiState
 import com.brankogeorgiev.presentation.screen.home.HomeScreen
 import com.brankogeorgiev.presentation.screen.players.PlayersScreen
+import com.brankogeorgiev.presentation.screen.stats.StatsScreen
 import org.koin.compose.koinInject
 
 @Composable
@@ -83,6 +84,9 @@ actual fun NavGraph(
                         isAdmin = isAdmin,
                         userSession = userSession
                     )
+                }
+                entry<Screen.Stats> {
+                    StatsScreen(client = client)
                 }
             }
         )

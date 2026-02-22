@@ -10,5 +10,5 @@ data class Player(
     @SerialName("name")
     val name: String,
     @SerialName("default_team")
-    val team: Team,
+    val team: Team
 )
