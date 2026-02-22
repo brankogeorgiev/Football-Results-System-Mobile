@@ -20,5 +20,10 @@ object Resource {
         val LOCK = Res.drawable.lock
         val MAIL = Res.drawable.mail
         val SHIELD = Res.drawable.shield
+        val ARROW_UP = Res.drawable.arrow_up
+        val ARROW_DOWN = Res.drawable.arrow_down
+        val CALENDAR = Res.drawable.calendar
+        val FILTER = Res.drawable.filter
+        val GOAL = Res.drawable.goal
     }
 }
