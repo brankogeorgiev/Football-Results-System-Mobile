@@ -15,12 +15,16 @@ class SessionStore {
 
     fun loadSavedSession(): UserSession? {
         val accessToken = settings.getStringOrNull("accessToken") ?: return null
+        val refreshToken = settings.getStringOrNull("refreshToken") ?: return null
         val userId = settings.getStringOrNull("userId") ?: return null
+        val email = settings.getStringOrNull("email") ?: return null
         val isAdmin = settings.getBoolean("isAdmin", false)
 
         return UserSession(
             accessToken = accessToken,
+            refreshToken = refreshToken,
             userId = userId,
+            email = email,
             isAdmin = isAdmin
         )
     }

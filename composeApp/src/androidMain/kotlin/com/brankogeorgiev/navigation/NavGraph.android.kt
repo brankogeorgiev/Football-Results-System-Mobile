@@ -11,9 +11,11 @@ import androidx.compose.ui.Modifier
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.ui.NavDisplay
 import com.brankogeorgiev.data.auth.ApiClient
+import com.brankogeorgiev.data.auth.AuthRepository
 import com.brankogeorgiev.data.auth.UserSession
 import com.brankogeorgiev.presentation.composable.bottom_bar.CustomBottomAppBar
 import com.brankogeorgiev.presentation.composable.top_bar.CustomTopAppBar
+import com.brankogeorgiev.presentation.screen.admin.AdminScreen
 import com.brankogeorgiev.presentation.screen.auth.dialog.AuthDialog
 import com.brankogeorgiev.presentation.screen.auth.dialog.AuthMode
 import com.brankogeorgiev.presentation.screen.auth.dialog.AuthUiState
@@ -25,6 +27,7 @@ import org.koin.compose.koinInject
 @Composable
 actual fun NavGraph(
     client: ApiClient,
+    authRepository: AuthRepository,
     userSession: UserSession?,
     authenticate: (Boolean, () -> Unit) -> Unit,
     logout: () -> Unit,
@@ -50,7 +53,7 @@ actual fun NavGraph(
                 isAdmin = userSession?.isAdmin ?: false,
                 logout = logout,
                 onLoginClick = { showAuthDialog = true },
-                updateIsAdmin = { isAdmin = !isAdmin }
+                navigateToAdminScreen = navigator::navigateToScreen
             )
         },
         bottomBar = {
@@ -87,6 +90,13 @@ actual fun NavGraph(
                 }
                 entry<Screen.Stats> {
                     StatsScreen(client = client)
+                }
+                entry<Screen.Admin> {
+                    AdminScreen(
+                        onBack = navigator::goBack,
+                        client = client,
+                        authRepository = authRepository
+                    )
                 }
             }
         )

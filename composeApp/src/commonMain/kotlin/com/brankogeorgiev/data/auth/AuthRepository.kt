@@ -9,7 +9,7 @@ class AuthRepository(private val apiClient: ApiClient) {
     fun getSession(): UserSession? = session
 
     suspend fun login(email: String, password: String) {
-        val accessToken = try {
+        val tokenResponse = try {
             apiClient.post<TokenResponse>(
                 url = "${Secrets.SUPABASE_URL}/auth/v1/token?grant_type=password",
                 headers = mapOf(
@@ -20,16 +20,21 @@ class AuthRepository(private val apiClient: ApiClient) {
                     "email" to email,
                     "password" to password
                 )
-            ).access_token
+            )
         } catch (e: Exception) {
             throw Exception("Invalid credentials")
         }
+
+        val accessToken = tokenResponse.access_token
+        val refreshToken = tokenResponse.refresh_token
 
         val user = fetchUser(accessToken, email)
 
         session = UserSession(
             accessToken = accessToken,
+            refreshToken = refreshToken,
             userId = user?.id ?: email,
+            email = email,
             isAdmin = user?.role == "admin"
         )
 
@@ -76,6 +81,27 @@ class AuthRepository(private val apiClient: ApiClient) {
         }
     }
 
+    suspend fun refreshAccessToken(): String {
+        val currentSession = session ?: throw Exception("No session")
+
+        val response = apiClient.post<TokenResponse>(
+            url = "${Secrets.SUPABASE_URL}/auth/v1/token?grant_type=refresh_token",
+            headers = mapOf(
+                "apiKey" to Secrets.SUPABASE_API_KEY,
+                "Content-Type" to "application/json"
+            ),
+            body = mapOf("refresh_token" to currentSession.refreshToken)
+        )
+
+        session = currentSession.copy(
+            accessToken = response.access_token,
+            refreshToken = response.refresh_token
+        )
+
+        sessionStore.saveSession(session)
+        return response.access_token
+    }
+
     fun loadSavedSession(): UserSession? {
         session = sessionStore.loadSavedSession()
         return session
@@ -84,5 +110,9 @@ class AuthRepository(private val apiClient: ApiClient) {
     fun clearSavedSession() {
         session = null
         sessionStore.clearSavedSession()
+    }
+
+    fun getCurrentUserEmail(): String? {
+        return session?.email
     }
 }
