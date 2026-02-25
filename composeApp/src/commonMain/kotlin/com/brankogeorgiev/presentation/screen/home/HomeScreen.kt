@@ -69,6 +69,6 @@ fun HomeScreen(
 @Composable
 private fun HomeScreenPreview() {
     MaterialTheme {
-        HomeScreen(ApiClient(), true, false, UserSession("", "", true))
+        HomeScreen(ApiClient(), true, false, UserSession("", "", "", "", true))
     }
 }

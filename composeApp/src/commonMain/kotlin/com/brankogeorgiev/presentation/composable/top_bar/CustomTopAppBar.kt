@@ -17,6 +17,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.brankogeorgiev.navigation.Screen
 import com.brankogeorgiev.util.Resource
 import org.jetbrains.compose.resources.painterResource
 
@@ -27,7 +28,7 @@ fun CustomTopAppBar(
     logout: () -> Unit,
     onLoginClick: () -> Unit,
     isAdmin: Boolean,
-    updateIsAdmin: () -> Unit
+    navigateToAdminScreen: (Screen) -> Unit
 ) {
     TopAppBar(
         modifier = Modifier.padding(horizontal = 12.dp),
@@ -68,7 +69,7 @@ fun CustomTopAppBar(
         },
         actions = {
             if (isLoggedIn && isAdmin) {
-                IconButton(onClick = updateIsAdmin) {
+                IconButton(onClick = { navigateToAdminScreen(Screen.Admin) }) {
                     Icon(
                         painter = painterResource(Resource.Icon.ADMIN),
                         contentDescription = "",

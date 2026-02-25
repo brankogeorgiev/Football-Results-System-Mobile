@@ -23,6 +23,7 @@ fun App(client: ApiClient) {
     MaterialTheme(colorScheme = colorScheme) {
         NavGraph(
             client = client,
+            authRepository = authRepository,
             userSession = authViewModel.userSession,
             authenticate = authViewModel::authenticate,
             logout = authViewModel::logout,

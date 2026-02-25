@@ -15,4 +15,7 @@ sealed class Screen {
 
     @Serializable
     object Export : Screen()
+
+    @Serializable
+    object Admin : Screen()
 }
