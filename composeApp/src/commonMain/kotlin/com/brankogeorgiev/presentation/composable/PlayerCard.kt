@@ -96,7 +96,9 @@ fun PlayerCard(
 
                 Spacer(modifier = Modifier.height(4.dp))
 
-                TeamChip(team = player.team.name)
+                if (player.team != null) {
+                    TeamChip(team = player.team.name)
+                }
             }
 
             if (isLoggedIn && isAdmin) {
