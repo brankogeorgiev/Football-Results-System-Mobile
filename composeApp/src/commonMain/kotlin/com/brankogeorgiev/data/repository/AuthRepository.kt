@@ -5,6 +5,7 @@ import com.brankogeorgiev.data.auth.SessionStore
 import com.brankogeorgiev.data.auth.TokenResponse
 import com.brankogeorgiev.data.auth.User
 import com.brankogeorgiev.data.auth.UserSession
+import com.brankogeorgiev.util.Result
 import com.brankogeorgiev.util.Secrets
 
 class AuthRepository(private val apiClient: ApiClient) {
@@ -14,20 +15,19 @@ class AuthRepository(private val apiClient: ApiClient) {
     fun getSession(): UserSession? = session
 
     suspend fun login(email: String, password: String) {
-        val tokenResponse = try {
-            apiClient.post<TokenResponse>(
-                url = "${Secrets.SUPABASE_URL}/auth/v1/token?grant_type=password",
-                headers = mapOf(
-                    "apikey" to Secrets.SUPABASE_API_KEY,
-                    "Content-Type" to "application/json"
-                ),
-                body = mapOf(
-                    "email" to email,
-                    "password" to password
-                )
+        val tokenResponse = when (val result = apiClient.post<TokenResponse>(
+            url = "${Secrets.SUPABASE_URL}/auth/v1/token?grant_type=password",
+            headers = mapOf(
+                "apikey" to Secrets.SUPABASE_API_KEY,
+                "Content-Type" to "application/json"
+            ),
+            body = mapOf(
+                "email" to email,
+                "password" to password
             )
-        } catch (e: Exception) {
-            throw Exception("Invalid credentials")
+        )) {
+            is Result.Success -> result.data
+            is Result.Error -> throw Exception("Invalid credentials")
         }
 
         val accessToken = tokenResponse.access_token
@@ -71,40 +71,41 @@ class AuthRepository(private val apiClient: ApiClient) {
         accessToken: String,
         email: String
     ): User? {
-        return try {
-            val users: List<User> = apiClient.get(
-                url = "${Secrets.Companion.SUPABASE_URL}/functions/v1/get-users",
-                headers = mapOf(
-                    "Authorization" to "Bearer $accessToken",
-                    "apikey" to Secrets.Companion.SUPABASE_API_KEY,
-                    "Accept" to "application/json"
-                )
+        return when (val result = apiClient.get<List<User>>(
+            url = "${Secrets.SUPABASE_URL}/functions/v1/get-users",
+            headers = mapOf(
+                "Authorization" to "Bearer $accessToken",
+                "apiKey" to Secrets.SUPABASE_API_KEY,
+                "Accept" to "application/json"
             )
-            users.find { it.email == email }
-        } catch (_: Exception) {
-            null
+        )) {
+            is Result.Success -> result.data.find { it.email == email }
+            is Result.Error -> null
         }
     }
 
     suspend fun refreshAccessToken(): String {
         val currentSession = session ?: throw Exception("No session")
 
-        val response = apiClient.post<TokenResponse>(
-            url = "${Secrets.Companion.SUPABASE_URL}/auth/v1/token?grant_type=refresh_token",
+        val tokenResponse = when (val result = apiClient.post<TokenResponse>(
+            url = "${Secrets.SUPABASE_URL}/auth/v1/token?grant_type=refresh_token",
             headers = mapOf(
-                "apiKey" to Secrets.Companion.SUPABASE_API_KEY,
+                "apiKey" to Secrets.SUPABASE_API_KEY,
                 "Content-Type" to "application/json"
             ),
             body = mapOf("refresh_token" to currentSession.refreshToken)
-        )
+        )) {
+            is Result.Success -> result.data
+            is Result.Error -> throw Exception("Failed to refresh token")
+        }
 
         session = currentSession.copy(
-            accessToken = response.access_token,
-            refreshToken = response.refresh_token
+            accessToken = tokenResponse.access_token,
+            refreshToken = tokenResponse.refresh_token
         )
 
         sessionStore.saveSession(session)
-        return response.access_token
+        return tokenResponse.access_token
     }
 
     fun loadSavedSession(): UserSession? {

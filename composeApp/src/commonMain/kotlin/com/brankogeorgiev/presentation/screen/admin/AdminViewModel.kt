@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.brankogeorgiev.data.model.UserWithRole
 import com.brankogeorgiev.data.repository.AdminRepository
+import com.brankogeorgiev.util.Result
 import kotlinx.coroutines.launch
 
 class AdminViewModel(
@@ -42,13 +43,15 @@ class AdminViewModel(
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(isLoading = true, error = null)
 
-            try {
-                val users = repository.getUsers()
-                _uiState.value = _uiState.value.copy(isLoading = false, allUsers = users)
-            } catch (e: Exception) {
-                _uiState.value = _uiState.value.copy(
+            when (val result = repository.getUsers()) {
+                is Result.Success -> _uiState.value = _uiState.value.copy(
                     isLoading = false,
-                    error = e.message ?: "Something went wrong"
+                    allUsers = result.data
+                )
+
+                is Result.Error -> _uiState.value = _uiState.value.copy(
+                    isLoading = false,
+                    error = "Something went wrong"
                 )
             }
         }
