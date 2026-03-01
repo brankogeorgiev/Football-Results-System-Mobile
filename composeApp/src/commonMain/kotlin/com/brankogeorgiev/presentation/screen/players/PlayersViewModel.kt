@@ -69,4 +69,17 @@ class PlayersViewModel(
             }
         }
     }
+
+    fun deletePlayer(id: String) {
+        viewModelScope.launch {
+            try {
+                adminRepository.deletePlayer(id = id)
+                loadPlayers()
+            } catch (e: Exception) {
+                _uiState.value = _uiState.value.copy(
+                    players = RequestState.Error(e.message ?: "Unknown error")
+                )
+            }
+        }
+    }
 }

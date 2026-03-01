@@ -9,16 +9,13 @@ import com.brankogeorgiev.util.getBaseUrl
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
-import io.ktor.client.request.get
 import io.ktor.client.request.header
-import io.ktor.client.request.post
-import io.ktor.client.request.put
+import io.ktor.client.request.request
 import io.ktor.client.request.setBody
 import io.ktor.client.statement.HttpResponse
-import io.ktor.client.statement.bodyAsText
 import io.ktor.http.ContentType
+import io.ktor.http.HttpMethod
 import io.ktor.http.contentType
-import io.ktor.http.isSuccess
 import io.ktor.serialization.kotlinx.json.json
 import io.ktor.util.network.UnresolvedAddressException
 import kotlinx.serialization.SerializationException
@@ -40,59 +37,21 @@ class ApiClient() {
         }
     }
 
-    suspend inline fun <reified T> post(
+    suspend inline fun <reified T> requestSafe(
+        method: HttpMethod,
         url: String,
         headers: Map<String, String> = emptyMap(),
-        body: Any
-    ): T {
-        val response = client.post(url) {
-            headers.forEach { (k, v) -> header(k, v) }
-            contentType(ContentType.Application.Json)
-            setBody(body)
-        }
-
-        if (!response.status.isSuccess()) {
-            val errorBody = response.bodyAsText()
-            throw Exception("HTTP ${response.status.value}: $errorBody")
-        }
-
-        return response.body()
-    }
-
-    suspend inline fun <reified T> get(
-        url: String,
-        headers: Map<String, String> = emptyMap()
-    ): T {
-        val response = client.get(url) {
-            headers.forEach { (k, v) -> header(k, v) }
-        }
-
-        if (!response.status.isSuccess()) {
-            val errorBody = response.bodyAsText()
-            throw Exception("HTTP ${response.status.value}: $errorBody")
-        }
-
-        return response.body()
-    }
-
-    suspend inline fun <reified T> put(
-        url: String,
-        headers: Map<String, String> = emptyMap(),
-        body: Any
-    ) {
-        return client.put(url) {
-            headers.forEach { (k, v) -> header(k, v) }
-            contentType(ContentType.Application.Json)
-            setBody(body)
-        }.body()
-    }
-
-    suspend inline fun <reified T> safeGet(
-        httpClient: HttpClient,
-        url: String
+        body: Any? = null
     ): Result<T, NetworkError> {
         val response: HttpResponse = try {
-            httpClient.get(url)
+            client.request(url) {
+                this.method = method
+                headers.forEach { (k, v) -> header(k, v) }
+                if (body != null) {
+                    contentType(ContentType.Application.Json)
+                    setBody(body)
+                }
+            }
         } catch (e: UnresolvedAddressException) {
             return Result.Error(NetworkError.NO_INTERNET)
         } catch (e: SerializationException) {
@@ -117,12 +76,35 @@ class ApiClient() {
         }
     }
 
+    suspend inline fun <reified T> get(url: String, headers: Map<String, String> = emptyMap()) =
+        requestSafe<T>(method = HttpMethod.Get, url = url, headers = headers)
+
+    suspend inline fun <reified T> post(
+        url: String,
+        headers: Map<String, String> = emptyMap(),
+        body: Any
+    ) = requestSafe<T>(method = HttpMethod.Post, url = url, headers = headers, body = body)
+
+    suspend inline fun <reified T> put(
+        url: String,
+        headers: Map<String, String> = emptyMap(),
+        body: Any
+    ) = requestSafe<T>(method = HttpMethod.Put, url = url, headers = headers, body = body)
+
+    suspend inline fun <reified T> delete(
+        url: String,
+        headers: Map<String, String> = emptyMap()
+    ) = requestSafe<T>(HttpMethod.Delete, url = url, headers = headers)
+
     suspend fun fetchMatches(): Result<List<Match>, NetworkError> =
-        safeGet<List<Match>>(client, getBaseUrl() + API_MATCHES)
+        get(url = getBaseUrl() + API_MATCHES)
 
-    suspend fun fetchPlayers() =
-        safeGet<List<Player>>(client, getBaseUrl() + API_PLAYERS)
+    suspend fun fetchPlayers(): Result<List<Player>, NetworkError> =
+        get(url = getBaseUrl() + API_PLAYERS)
 
-    suspend fun fetchGoals() =
-        safeGet<List<Goal>>(client, getBaseUrl() + API_GOALS)
+    suspend fun fetchGoals(): Result<List<Goal>, NetworkError> =
+        get(url = getBaseUrl() + API_GOALS)
+
+    suspend fun deletePlayer(playerId: String): Result<Unit, NetworkError> =
+        delete(url = getBaseUrl() + "$API_PLAYERS/$playerId")
 }
