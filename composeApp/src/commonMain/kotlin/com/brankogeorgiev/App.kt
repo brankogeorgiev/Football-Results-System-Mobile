@@ -6,7 +6,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.tooling.preview.Preview
 import com.brankogeorgiev.data.auth.ApiClient
-import com.brankogeorgiev.data.auth.AuthRepository
+import com.brankogeorgiev.data.repository.AdminRepository
+import com.brankogeorgiev.data.repository.AuthRepository
 import com.brankogeorgiev.navigation.NavGraph
 import com.brankogeorgiev.presentation.screen.auth.dialog.AuthViewModel
 import com.brankogeorgiev.util.darkScheme
@@ -18,12 +19,14 @@ fun App(client: ApiClient) {
     val colorScheme = if (isSystemInDarkTheme()) darkScheme else lightScheme
 
     val authRepository = remember { AuthRepository(client) }
+    val adminRepository = remember { AdminRepository(client, authRepository) }
     val authViewModel = remember { AuthViewModel(authRepository = authRepository) }
 
     MaterialTheme(colorScheme = colorScheme) {
         NavGraph(
             client = client,
             authRepository = authRepository,
+            adminRepository = adminRepository,
             userSession = authViewModel.userSession,
             authenticate = authViewModel::authenticate,
             logout = authViewModel::logout,
