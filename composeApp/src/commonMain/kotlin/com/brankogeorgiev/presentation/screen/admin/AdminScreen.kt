@@ -29,10 +29,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.brankogeorgiev.data.admin.AdminRepository
-import com.brankogeorgiev.data.auth.ApiClient
-import com.brankogeorgiev.data.auth.AuthRepository
 import com.brankogeorgiev.data.model.UserWithRole
+import com.brankogeorgiev.data.repository.AdminRepository
+import com.brankogeorgiev.data.repository.AuthRepository
 import com.brankogeorgiev.presentation.composable.LoadingIndicator
 import com.brankogeorgiev.util.Resource
 import org.jetbrains.compose.resources.DrawableResource
@@ -41,16 +40,11 @@ import org.jetbrains.compose.resources.painterResource
 @Composable
 fun AdminScreen(
     onBack: () -> Unit,
-    client: ApiClient,
-    authRepository: AuthRepository
+    authRepository: AuthRepository,
+    adminRepository: AdminRepository
 ) {
     val viewModel = remember {
-        AdminViewModel(
-            AdminRepository(
-                apiClient = client,
-                authRepository = authRepository
-            )
-        )
+        AdminViewModel(repository = adminRepository)
     }
     val state = viewModel.uiState.value
 

@@ -1,5 +1,10 @@
-package com.brankogeorgiev.data.auth
+package com.brankogeorgiev.data.repository
 
+import com.brankogeorgiev.data.auth.ApiClient
+import com.brankogeorgiev.data.auth.SessionStore
+import com.brankogeorgiev.data.auth.TokenResponse
+import com.brankogeorgiev.data.auth.User
+import com.brankogeorgiev.data.auth.UserSession
 import com.brankogeorgiev.util.Secrets
 
 class AuthRepository(private val apiClient: ApiClient) {
@@ -44,9 +49,9 @@ class AuthRepository(private val apiClient: ApiClient) {
     suspend fun signUp(email: String, password: String) {
         try {
             apiClient.post<Unit>(
-                url = "${Secrets.SUPABASE_URL}/auth/v1/signup",
+                url = "${Secrets.Companion.SUPABASE_URL}/auth/v1/signup",
                 headers = mapOf(
-                    "apikey" to Secrets.SUPABASE_API_KEY,
+                    "apikey" to Secrets.Companion.SUPABASE_API_KEY,
                     "Content-Type" to "application/json"
                 ),
                 body = mapOf(
@@ -68,10 +73,10 @@ class AuthRepository(private val apiClient: ApiClient) {
     ): User? {
         return try {
             val users: List<User> = apiClient.get(
-                url = "${Secrets.SUPABASE_URL}/functions/v1/get-users",
+                url = "${Secrets.Companion.SUPABASE_URL}/functions/v1/get-users",
                 headers = mapOf(
                     "Authorization" to "Bearer $accessToken",
-                    "apikey" to Secrets.SUPABASE_API_KEY,
+                    "apikey" to Secrets.Companion.SUPABASE_API_KEY,
                     "Accept" to "application/json"
                 )
             )
@@ -85,9 +90,9 @@ class AuthRepository(private val apiClient: ApiClient) {
         val currentSession = session ?: throw Exception("No session")
 
         val response = apiClient.post<TokenResponse>(
-            url = "${Secrets.SUPABASE_URL}/auth/v1/token?grant_type=refresh_token",
+            url = "${Secrets.Companion.SUPABASE_URL}/auth/v1/token?grant_type=refresh_token",
             headers = mapOf(
-                "apiKey" to Secrets.SUPABASE_API_KEY,
+                "apiKey" to Secrets.Companion.SUPABASE_API_KEY,
                 "Content-Type" to "application/json"
             ),
             body = mapOf("refresh_token" to currentSession.refreshToken)

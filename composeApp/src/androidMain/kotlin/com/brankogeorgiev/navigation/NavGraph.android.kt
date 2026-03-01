@@ -11,8 +11,9 @@ import androidx.compose.ui.Modifier
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.ui.NavDisplay
 import com.brankogeorgiev.data.auth.ApiClient
-import com.brankogeorgiev.data.auth.AuthRepository
 import com.brankogeorgiev.data.auth.UserSession
+import com.brankogeorgiev.data.repository.AdminRepository
+import com.brankogeorgiev.data.repository.AuthRepository
 import com.brankogeorgiev.presentation.composable.bottom_bar.CustomBottomAppBar
 import com.brankogeorgiev.presentation.composable.top_bar.CustomTopAppBar
 import com.brankogeorgiev.presentation.screen.admin.AdminScreen
@@ -28,6 +29,7 @@ import org.koin.compose.koinInject
 actual fun NavGraph(
     client: ApiClient,
     authRepository: AuthRepository,
+    adminRepository: AdminRepository,
     userSession: UserSession?,
     authenticate: (Boolean, () -> Unit) -> Unit,
     logout: () -> Unit,
@@ -85,7 +87,8 @@ actual fun NavGraph(
                         client = client,
                         isLoggedIn = isLoggedIn,
                         isAdmin = isAdmin,
-                        userSession = userSession
+                        userSession = userSession,
+                        adminRepository = adminRepository
                     )
                 }
                 entry<Screen.Stats> {
@@ -94,8 +97,8 @@ actual fun NavGraph(
                 entry<Screen.Admin> {
                     AdminScreen(
                         onBack = navigator::goBack,
-                        client = client,
-                        authRepository = authRepository
+                        authRepository = authRepository,
+                        adminRepository = adminRepository
                     )
                 }
             }

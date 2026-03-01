@@ -1,7 +1,7 @@
-package com.brankogeorgiev.data.admin
+package com.brankogeorgiev.data.repository
 
 import com.brankogeorgiev.data.auth.ApiClient
-import com.brankogeorgiev.data.auth.AuthRepository
+import com.brankogeorgiev.data.model.AddPlayer
 import com.brankogeorgiev.data.model.UserWithRole
 import com.brankogeorgiev.data.model.UserWithRoleDto
 import com.brankogeorgiev.util.Secrets
@@ -51,6 +51,23 @@ class AdminRepository(
                 )
             )
             println("UPDATE RESPONSE: $response")
+        }
+    }
+
+    suspend fun createPlayer(name: String, teamId: String?) {
+        return try {
+            apiClient.post(
+                url = "${Secrets.SUPABASE_URL}/functions/v1/api-players",
+                body = AddPlayer(name = name, defaultTeamId = teamId)
+            )
+        } catch (e: Exception) {
+            // TODO: Check
+            val newToken = authRepository.refreshAccessToken()
+
+            apiClient.post(
+                url = "${Secrets.SUPABASE_URL}/functions/v1/api-players",
+                body = AddPlayer(name = name, defaultTeamId = teamId)
+            )
         }
     }
 

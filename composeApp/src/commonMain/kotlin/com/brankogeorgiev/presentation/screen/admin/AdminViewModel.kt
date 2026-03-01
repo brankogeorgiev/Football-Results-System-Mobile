@@ -5,8 +5,8 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.brankogeorgiev.data.admin.AdminRepository
 import com.brankogeorgiev.data.model.UserWithRole
+import com.brankogeorgiev.data.repository.AdminRepository
 import kotlinx.coroutines.launch
 
 class AdminViewModel(

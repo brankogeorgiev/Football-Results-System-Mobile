@@ -7,8 +7,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.brankogeorgiev.data.auth.AuthRepository
 import com.brankogeorgiev.data.auth.UserSession
+import com.brankogeorgiev.data.repository.AuthRepository
 import kotlinx.coroutines.launch
 
 class AuthViewModel(private val authRepository: AuthRepository) : ViewModel() {
