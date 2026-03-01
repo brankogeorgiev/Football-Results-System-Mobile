@@ -2,6 +2,7 @@ package com.brankogeorgiev.data.repository
 
 import com.brankogeorgiev.data.auth.ApiClient
 import com.brankogeorgiev.data.model.AddPlayer
+import com.brankogeorgiev.data.model.Player
 import com.brankogeorgiev.data.model.UserWithRole
 import com.brankogeorgiev.data.model.UserWithRoleDto
 import com.brankogeorgiev.util.Secrets
@@ -68,6 +69,17 @@ class AdminRepository(
                 url = "${Secrets.SUPABASE_URL}/functions/v1/api-players",
                 body = AddPlayer(name = name, defaultTeamId = teamId)
             )
+        }
+    }
+
+    suspend fun updatePlayer(id: String, name: String, teamId: String?) {
+        return try {
+            apiClient.put<Player>(
+                url = "${Secrets.SUPABASE_URL}/functions/v1/api-players?id=$id",
+                body = mapOf("name" to name, "default_team_id" to teamId),
+            )
+        } catch (e: Exception) {
+            // TODO: Catch Exception
         }
     }
 

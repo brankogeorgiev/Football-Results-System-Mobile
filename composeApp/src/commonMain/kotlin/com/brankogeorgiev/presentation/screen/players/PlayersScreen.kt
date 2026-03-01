@@ -38,6 +38,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.brankogeorgiev.data.auth.ApiClient
 import com.brankogeorgiev.data.auth.UserSession
+import com.brankogeorgiev.data.model.Player
 import com.brankogeorgiev.data.repository.AdminRepository
 import com.brankogeorgiev.presentation.composable.LoadingIndicator
 import com.brankogeorgiev.presentation.composable.PlayerCard
@@ -59,6 +60,7 @@ fun PlayersScreen(
     val uiState by viewModel.uiState
 
     var showDialog by remember { mutableStateOf(false) }
+    var editingPlayer by remember { mutableStateOf<Player?>(null) }
 
     uiState.players.DisplayResult(
         onLoading = { LoadingIndicator() },
@@ -90,12 +92,12 @@ fun PlayersScreen(
                 }
 
                 LazyColumn(modifier = Modifier.fillMaxSize()) {
-                    items(players) {
+                    items(players) { player ->
                         PlayerCard(
-                            player = it,
+                            player = player,
                             isAdmin = isAdmin,
                             isLoggedIn = isLoggedIn,
-                            onEdit = {},
+                            onEdit = { editingPlayer = player },
                             onDelete = {}
                         )
                     }
@@ -105,9 +107,26 @@ fun PlayersScreen(
             if (showDialog) {
                 AddPlayerDialog(
                     onDismiss = { showDialog = false },
-                    onAdd = { name, teamId ->
+                    onConfirm = { name, teamId ->
                         viewModel.addPlayer(name = name, teamId = teamId)
                         showDialog = false
+                    }
+                )
+            }
+
+            editingPlayer?.let { player ->
+                AddPlayerDialog(
+                    initialName = player.name,
+                    initialTeamId = player.team?.id ?: "",
+                    isEdit = true,
+                    onDismiss = { editingPlayer = null },
+                    onConfirm = { name, teamId ->
+                        viewModel.updatePlayer(
+                            id = player.id,
+                            name = name,
+                            teamId = teamId
+                        )
+                        editingPlayer = null
                     }
                 )
             }
@@ -117,8 +136,14 @@ fun PlayersScreen(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddPlayerDialog(onDismiss: () -> Unit, onAdd: (String, String?) -> Unit) {
-    var playerName by remember { mutableStateOf("") }
+fun AddPlayerDialog(
+    onDismiss: () -> Unit,
+    onConfirm: (String, String?) -> Unit,
+    initialName: String = "",
+    initialTeamId: String? = null,
+    isEdit: Boolean = false
+) {
+    var playerName by remember { mutableStateOf(initialName) }
     val teams = listOf(
         null to "No team",
         "aa9ea52f-d297-4c6a-9225-39c7a8d3a24f" to "Beli",
@@ -133,7 +158,7 @@ fun AddPlayerDialog(onDismiss: () -> Unit, onAdd: (String, String?) -> Unit) {
         confirmButton = {},
         title = {
             Text(
-                text = "Add Player",
+                text = if (!isEdit) "Add Player" else "Update Player",
                 fontWeight = FontWeight.Bold,
                 fontSize = 20.sp,
                 style = MaterialTheme.typography.titleMedium
@@ -221,7 +246,7 @@ fun AddPlayerDialog(onDismiss: () -> Unit, onAdd: (String, String?) -> Unit) {
 
                 Button(
                     onClick = {
-                        onAdd(playerName, selectedTeam)
+                        onConfirm(playerName, selectedTeam)
                     },
                     enabled = playerName.isNotBlank(),
                     shape = RoundedCornerShape(12.dp),
