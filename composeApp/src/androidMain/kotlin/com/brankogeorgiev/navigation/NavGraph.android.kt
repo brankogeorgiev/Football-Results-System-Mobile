@@ -39,8 +39,6 @@ actual fun NavGraph(
     onModeChange: (AuthMode) -> Unit
 ) {
     val navigator = koinInject<Navigator>()
-    var isLoggedIn by remember { mutableStateOf(false) }
-    var isAdmin by remember { mutableStateOf(true) }
     var showAuthDialog by remember { mutableStateOf(false) }
 
 //    val homeViewModel = HomeViewModel(client = client)
@@ -77,16 +75,16 @@ actual fun NavGraph(
                 entry<Screen.Home> {
                     HomeScreen(
                         client = client,
-                        isLoggedIn = isLoggedIn,
-                        isAdmin = isAdmin,
+                        isLoggedIn = userSession != null,
+                        isAdmin = userSession?.isAdmin ?: false,
                         userSession = userSession
                     )
                 }
                 entry<Screen.Players> {
                     PlayersScreen(
                         client = client,
-                        isLoggedIn = isLoggedIn,
-                        isAdmin = isAdmin,
+                        isLoggedIn = userSession != null,
+                        isAdmin = userSession?.isAdmin ?: false,
                         userSession = userSession,
                         adminRepository = adminRepository
                     )

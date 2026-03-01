@@ -101,12 +101,13 @@ fun PlayerCard(
                 }
             }
 
-            if (isLoggedIn && isAdmin) {
-                ListItemCardActions(
-                    onEdit = onEdit,
-                    onDelete = onDelete
-                )
-            }
+            // TODO: Remove comments
+//            if (isLoggedIn && isAdmin) {
+            ListItemCardActions(
+                onEdit = onEdit,
+                onDelete = onDelete
+            )
+//            }
         }
     }
 }

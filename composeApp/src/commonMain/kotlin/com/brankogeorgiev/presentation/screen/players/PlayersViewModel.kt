@@ -56,4 +56,17 @@ class PlayersViewModel(
             }
         }
     }
+
+    fun updatePlayer(id: String, name: String, teamId: String?) {
+        viewModelScope.launch {
+            try {
+                adminRepository.updatePlayer(id = id, name = name, teamId = teamId)
+                loadPlayers()
+            } catch (e: Exception) {
+                _uiState.value = _uiState.value.copy(
+                    players = RequestState.Error(e.message ?: "Unknown error")
+                )
+            }
+        }
+    }
 }
