@@ -3,6 +3,7 @@ package com.brankogeorgiev.data.auth
 import com.brankogeorgiev.data.model.Goal
 import com.brankogeorgiev.data.model.Match
 import com.brankogeorgiev.data.model.Player
+import com.brankogeorgiev.domain.Team
 import com.brankogeorgiev.util.NetworkError
 import com.brankogeorgiev.util.Result
 import com.brankogeorgiev.util.getBaseUrl
@@ -23,9 +24,11 @@ import kotlinx.serialization.json.Json
 
 class ApiClient() {
     companion object {
+        private const val API_TEAMS = "/api-teams"
         private const val API_MATCHES = "/api-matches"
         private const val API_PLAYERS = "/api-players"
         private const val API_GOALS = "/api-goals"
+        const val API_MATCH_FULL = "/api-match-full"
     }
 
     val client = HttpClient {
@@ -95,6 +98,9 @@ class ApiClient() {
         url: String,
         headers: Map<String, String> = emptyMap()
     ) = requestSafe<T>(HttpMethod.Delete, url = url, headers = headers)
+
+    suspend fun fetchTeams(): Result<List<Team>, NetworkError> =
+        get(url = getBaseUrl() + API_TEAMS)
 
     suspend fun fetchMatches(): Result<List<Match>, NetworkError> =
         get(url = getBaseUrl() + API_MATCHES)

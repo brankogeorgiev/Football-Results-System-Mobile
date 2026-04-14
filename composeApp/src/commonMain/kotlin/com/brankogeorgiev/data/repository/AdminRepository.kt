@@ -1,6 +1,8 @@
 package com.brankogeorgiev.data.repository
 
 import com.brankogeorgiev.data.auth.ApiClient
+import com.brankogeorgiev.data.auth.ApiClient.Companion.API_MATCH_FULL
+import com.brankogeorgiev.data.create_match.CreateMatchRequest
 import com.brankogeorgiev.data.model.AddPlayer
 import com.brankogeorgiev.data.model.Player
 import com.brankogeorgiev.data.model.UserWithRole
@@ -8,6 +10,7 @@ import com.brankogeorgiev.data.model.UserWithRoleDto
 import com.brankogeorgiev.util.NetworkError
 import com.brankogeorgiev.util.Result
 import com.brankogeorgiev.util.Secrets
+import com.brankogeorgiev.util.getBaseUrl
 
 class AdminRepository(
     private val apiClient: ApiClient,
@@ -106,5 +109,28 @@ class AdminRepository(
             "apiKey" to Secrets.SUPABASE_API_KEY,
             "Accept" to "application/json"
         )
+    }
+
+
+    suspend fun createMatchFull(
+        body: CreateMatchRequest
+    ): Result<Unit, NetworkError> {
+        val result = apiClient.post<Unit>(
+            url = getBaseUrl() + API_MATCH_FULL,
+            headers = authHeaders(),
+            body = body
+        )
+
+        if (result is Result.Error && result.error == NetworkError.UNAUTHORIZED) {
+            val newToken = authRepository.refreshAccessToken()
+
+            return apiClient.post(
+                url = getBaseUrl() + API_MATCH_FULL,
+                headers = authHeaders(newToken),
+                body = body
+            )
+        }
+
+        return result
     }
 }

@@ -24,6 +24,7 @@ import footballresultssystem.composeapp.generated.resources.players
 import footballresultssystem.composeapp.generated.resources.remove_admin
 import footballresultssystem.composeapp.generated.resources.shield
 import footballresultssystem.composeapp.generated.resources.stats
+import footballresultssystem.composeapp.generated.resources.swap
 import footballresultssystem.composeapp.generated.resources.trophy
 
 object Resource {
@@ -52,5 +53,6 @@ object Resource {
         val CALENDAR = Res.drawable.calendar
         val FILTER = Res.drawable.filter
         val GOAL = Res.drawable.goal
+        val REFRESH = Res.drawable.swap
     }
 }

@@ -77,7 +77,8 @@ actual fun NavGraph(
                         client = client,
                         isLoggedIn = userSession != null,
                         isAdmin = userSession?.isAdmin ?: false,
-                        userSession = userSession
+                        userSession = userSession,
+                        adminRepository = adminRepository
                     )
                 }
                 entry<Screen.Players> {
