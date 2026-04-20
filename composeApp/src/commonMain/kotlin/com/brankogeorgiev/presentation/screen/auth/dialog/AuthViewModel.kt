@@ -9,9 +9,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.brankogeorgiev.data.auth.UserSession
 import com.brankogeorgiev.data.repository.AuthRepository
+import com.brankogeorgiev.session.SessionStorage
 import kotlinx.coroutines.launch
 
-class AuthViewModel(private val authRepository: AuthRepository) : ViewModel() {
+class AuthViewModel(
+    private val authRepository: AuthRepository,
+    private val sessionStorage: SessionStorage
+) : ViewModel() {
     private var _uiState: MutableState<AuthUiState> = mutableStateOf(AuthUiState())
     val uiState: State<AuthUiState> = _uiState
 
@@ -20,9 +24,19 @@ class AuthViewModel(private val authRepository: AuthRepository) : ViewModel() {
 
     init {
         viewModelScope.launch {
-            val saved = authRepository.loadSavedSession()
+            val active = sessionStorage.getActiveSession()
+            if (active != null) {
+                userSession = active
+                return@launch
+            }
+
+            val saved = sessionStorage.getSavedCredentials()
             if (saved != null) {
-                userSession = saved
+                _uiState.value = _uiState.value.copy(
+                    email = saved.email,
+                    password = saved.password,
+                    rememberMe = true
+                )
             }
         }
     }
@@ -47,43 +61,56 @@ class AuthViewModel(private val authRepository: AuthRepository) : ViewModel() {
         )
     }
 
+    fun onRememberMeChange(remember: Boolean) {
+        _uiState.value = _uiState.value.copy(rememberMe = remember)
+        if (!remember) {
+            viewModelScope.launch { sessionStorage.clearSavedCredentials() }
+        }
+    }
+
     fun authenticate(isLogin: Boolean, onSuccess: () -> Unit) {
-        val email = _uiState.value.email
-        val password = _uiState.value.password
+        val email = _uiState.value.email.trim()
+        val password = _uiState.value.password.trim()
 
-        val emailEmpty = email.trim().isBlank()
-        val passwordEmpty = password.trim().isBlank()
-
-        if (emailEmpty && passwordEmpty) {
-            _uiState.value = _uiState.value.copy(errorMessage = "Email and password are required.")
-            return
-        } else if (emailEmpty) {
-            _uiState.value = _uiState.value.copy(errorMessage = "Email is required.")
-            return
-        } else if (passwordEmpty) {
-            _uiState.value = _uiState.value.copy(errorMessage = "Password is required.")
+        val error = when {
+            email.isBlank() && password.isBlank() -> "Email and password are required."
+            email.isBlank() -> "Email is required."
+            password.isBlank() -> "Password is required."
+            else -> null
+        }
+        if (error != null) {
+            _uiState.value = _uiState.value.copy(errorMessage = error)
             return
         }
 
-        val infoText = if (isLogin) "Signing you in..." else "Creating your account..."
-
         viewModelScope.launch {
-            try {
-                _uiState.value = _uiState.value.copy(
-                    isLoading = true,
-                    infoMessage = infoText,
-                    errorMessage = null
-                )
+            _uiState.value = _uiState.value.copy(
+                isLoading = true,
+                infoMessage = if (isLogin) "Signing you in..." else "Creating your account...",
+                errorMessage = null
+            )
 
+            try {
                 if (isLogin) authRepository.login(email = email, password = password)
                 else authRepository.signUp(email = email, password = password)
 
-                userSession = authRepository.getSession()
+                val session = authRepository.getSession()
+                userSession = session
+
+                // TODO: Check null case
+                sessionStorage.saveSession(session ?: UserSession("", "", "", "", false))
+
+                if (_uiState.value.rememberMe) {
+                    sessionStorage.saveCredentials(email, password)
+                } else {
+                    sessionStorage.clearSavedCredentials()
+                }
+
                 onSuccess()
             } catch (e: Exception) {
                 _uiState.value = _uiState.value.copy(
-                    errorMessage = e.message
-                        ?: if (isLogin) "Invalid credentials" else "Sign up failed. Please try again.",
+                    errorMessage =
+                        e.message ?: if (isLogin) "Invalid credentials." else "Sign up failed.",
                     infoMessage = null
                 )
             } finally {
@@ -98,8 +125,8 @@ class AuthViewModel(private val authRepository: AuthRepository) : ViewModel() {
 
     fun logout() {
         viewModelScope.launch {
+            sessionStorage.clearSession()
             userSession = null
-            authRepository.clearSavedSession()
         }
     }
 }

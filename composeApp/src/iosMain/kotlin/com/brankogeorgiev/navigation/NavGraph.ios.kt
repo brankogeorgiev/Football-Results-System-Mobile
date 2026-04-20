@@ -19,7 +19,8 @@ actual fun NavGraph(
     authUiState: AuthUiState,
     onEmailChange: (String) -> Unit,
     onPasswordChange: (String) -> Unit,
-    onModeChange: (AuthMode) -> Unit
+    onModeChange: (AuthMode) -> Unit,
+    onRememberMeChange: (Boolean) -> Unit
 ) {
 
 }

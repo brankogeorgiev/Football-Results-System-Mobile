@@ -36,7 +36,8 @@ actual fun NavGraph(
     authUiState: AuthUiState,
     onEmailChange: (String) -> Unit,
     onPasswordChange: (String) -> Unit,
-    onModeChange: (AuthMode) -> Unit
+    onModeChange: (AuthMode) -> Unit,
+    onRememberMeChange: (Boolean) -> Unit
 ) {
     val navigator = koinInject<Navigator>()
     var showAuthDialog by remember { mutableStateOf(false) }
@@ -110,6 +111,7 @@ actual fun NavGraph(
             onEmailChange = onEmailChange,
             onPasswordChange = onPasswordChange,
             onModeChange = onModeChange,
+            onRememberMeChange = onRememberMeChange,
             onSignIn = {
                 authenticate(true, { showAuthDialog = false })
             },

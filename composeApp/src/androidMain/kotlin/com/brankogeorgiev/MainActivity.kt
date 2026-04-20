@@ -8,6 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.tooling.preview.Preview
 import com.brankogeorgiev.data.auth.ApiClient
+import com.brankogeorgiev.session.createDataStore
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -16,9 +17,8 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             App(
-                client = remember {
-                    ApiClient()
-                }
+                client = remember { ApiClient() },
+                prefs = remember { createDataStore(applicationContext) }
             )
         }
     }
@@ -27,5 +27,5 @@ class MainActivity : ComponentActivity() {
 @Preview
 @Composable
 fun AppAndroidPreview() {
-    App(ApiClient())
+//    App(ApiClient(), )
 }
