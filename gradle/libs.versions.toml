@@ -14,6 +14,8 @@ junit = "4.13.2"
 koinAndroid = "3.6.3"
 kotlin = "2.3.0"
 material3 = "1.10.0-alpha05"
+multiplatformSettings = "1.2.0"
+okio = "3.17.0"
 serialization = "1.9.0"
 dateTime = "0.7.1"
 navigation3 = "1.0.0"
@@ -24,6 +26,8 @@ ktor = "2.3.12"
 supabase = "2.5.0"
 
 [libraries]
+androidx-datastore = { module = "androidx.datastore:datastore", version = "1.1.1" }
+androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version = "1.1.1" }
 koin-android-v363 = { module = "io.insert-koin:koin-android", version.ref = "koinAndroid" }
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
 kotlin-testJunit = { module = "org.jetbrains.kotlin:kotlin-test-junit", version.ref = "kotlin" }
@@ -46,6 +50,8 @@ compose-uiToolingPreview = { module = "org.jetbrains.compose.ui:ui-tooling-previ
 kotlinx-serialization = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "serialization" }
 kotlinx-date-time = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "dateTime" }
 
+multiplatform-settings = { module = "com.russhwolf:multiplatform-settings", version.ref = "multiplatformSettings" }
+multiplatform-settings-coroutines = { module = "com.russhwolf:multiplatform-settings-coroutines", version.ref = "multiplatformSettings" }
 navigation3-ui = { module = "androidx.navigation3:navigation3-ui", version.ref = "navigation3" }
 navigation3-runtime = { module = "androidx.navigation3:navigation3-runtime", version.ref = "navigation3" }
 navigation3-viewmodel = { module = "androidx.lifecycle:lifecycle-viewmodel-navigation3", version.ref = "navigation3ViewModel" }

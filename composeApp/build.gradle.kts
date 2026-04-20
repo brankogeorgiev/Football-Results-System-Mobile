@@ -68,13 +68,12 @@ kotlin {
             implementation("io.github.jan-tennert.supabase:postgrest-kt:0.9.4")
             implementation(project.dependencies.platform("io.github.jan-tennert.supabase:bom:2.5.0"))
             implementation("io.ktor:ktor-client-core:2.3.7")
-//            implementation("io.ktor:ktor-client-js:2.3.12")
-//
-//            implementation(libs.supabase.core)
-//            implementation(project.dependencies.platform(libs.supabase.bom))
-//            implementation(libs.supabase.postgrest)
-//            implementation(libs.supabase.auth)
-//            implementation(libs.supabase.storage)s
+
+            implementation(libs.androidx.datastore)
+            implementation(libs.androidx.datastore.preferences)
+
+            implementation(libs.multiplatform.settings)
+            implementation(libs.multiplatform.settings.coroutines)
         }
         nativeMain.dependencies {
             implementation(libs.ktor.client.darwin)

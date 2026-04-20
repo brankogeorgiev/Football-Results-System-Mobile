@@ -14,6 +14,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -43,6 +44,7 @@ fun AuthDialog(
     onEmailChange: (String) -> Unit,
     onPasswordChange: (String) -> Unit,
     onModeChange: (AuthMode) -> Unit,
+    onRememberMeChange: (Boolean) -> Unit,
     onSignIn: () -> Unit,
     onSignUp: () -> Unit,
     onDismiss: () -> Unit,
@@ -110,6 +112,27 @@ fun AuthDialog(
                     })
                 )
 
+                if (uiState.mode == AuthMode.SIGN_IN) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Checkbox(checked = uiState.rememberMe, onCheckedChange = onRememberMeChange)
+                        Column(modifier = Modifier.padding(start = 4.dp)) {
+                            Text(
+                                text = "Remember me",
+                                style = MaterialTheme.typography.bodyMedium,
+                                fontWeight = FontWeight.Medium
+                            )
+                            Text(
+                                text = "Save email & password on this device",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                    }
+                }
+
                 LoadingMessage(isLoading = uiState.isLoading, infoMessage = uiState.infoMessage)
 
                 if (uiState.errorMessage != null) {
@@ -147,6 +170,6 @@ fun AuthDialog(
 @Composable
 private fun AuthDialogPreview() {
     MaterialTheme {
-        AuthDialog(AuthUiState(), {}, { }, { a -> }, {}, {}, {})
+        AuthDialog(AuthUiState(), {}, { }, { a -> }, {}, {}, {}, {})
     }
 }
